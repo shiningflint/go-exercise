@@ -1,12 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
 	fmt.Println("today I'm going to try some channels")
 	messages := make(chan string)
 
 	go func() {
+		time.Sleep(2 * time.Second)
 		messages <- "banana"
 	}()
 
@@ -14,6 +18,11 @@ func main() {
 		messages <- "potato"
 	}()
 
-	a, b := <-messages, <-messages
-	fmt.Println(a, b, a+b)
+	a := <-messages
+	fmt.Println(a)
+
+	b := <-messages
+	fmt.Println(b)
+
+	fmt.Println(a + b)
 }
