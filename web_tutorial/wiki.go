@@ -27,12 +27,15 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
+func renderTemplate(w http.ResponseWriter, p *Page, fn string) {
+	t, _ := template.ParseFiles(fn)
+	t.Execute(w, p)
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 	p, _ := loadPage(title)
-
-	t, _ := template.ParseFiles("view.html")
-	t.Execute(w, p)
+	renderTemplate(w, p, "view.html")
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
@@ -41,13 +44,20 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p = &Page{Title: title}
 	}
-	t, _ := template.ParseFiles("edit.html")
-	t.Execute(w, p)
+	renderTemplate(w, p, "edit.html")
+}
+
+func saveHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/save/"):]
+	p := Page{Title: title, Body: []byte(r.FormValue("body"))}
+	p.save()
+	renderTemplate(w, &p, "save.html")
 }
 
 func main() {
 	// https://golang.org/doc/articles/wiki/#tmp_6
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
+	http.HandleFunc("/save/", saveHandler)
 	log.Fatal(http.ListenAndServe(":8088", nil))
 }
