@@ -46,6 +46,7 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// https://golang.org/doc/articles/wiki/#tmp_6
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	log.Fatal(http.ListenAndServe(":8088", nil))
