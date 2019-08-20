@@ -10,13 +10,30 @@ type customer struct {
 	name string
 }
 
+type milk struct {
+	qty int
+}
+
+type espresso struct {
+	qty int
+}
+
+type latte struct {
+	name  string
+	ratio int
+}
+
+func newLatte(mi milk, es espresso) latte {
+	return latte{name: "a_new_latte", ratio: mi.qty + es.qty}
+}
+
 func main() {
-	var queue []customer
+	queue := generateCustomers(10)
+	fmt.Println("All customers queued!", len(queue))
 
-	sc := generateCustomers(10)
-	queueCustomers(sc, &queue)
-
-	fmt.Println("All customers queued!", queue)
+	fmt.Println("Placing one coffee order:")
+	l := orderLattte()
+	fmt.Println("got latte", l)
 }
 
 func generateCustomers(num int) []customer {
@@ -36,4 +53,11 @@ func queueCustomers(sc []customer, mc *[]customer) {
 		*mc = append(*mc, c)
 		fmt.Println("queued")
 	}
+}
+
+func orderLattte() latte {
+	mi := milk{qty: 70}
+	es := espresso{qty: 30}
+	cof := newLatte(mi, es)
+	return cof
 }
