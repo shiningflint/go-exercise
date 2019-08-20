@@ -1,10 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"html/template"
 	"io/ioutil"
+	"log"
+	"net/http"
 )
 
+// Page , a web page has title and body
 type Page struct {
 	Title string
 	Body  []byte
@@ -24,11 +27,27 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
-func main() {
-	p1 := &Page{Title: "post_one", Body: []byte("This is the body of the first post here hahahahaha")}
-	fmt.Println(p1)
-	p1.save()
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/view/"):]
+	p, _ := loadPage(title)
 
-	p2, _ := loadPage("post_one")
-	fmt.Println(string(p2.Body))
+	t, _ := template.ParseFiles("view.html")
+	t.Execute(w, p)
+}
+
+func editHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/edit/"):]
+	p, err := loadPage(title)
+	if err != nil {
+		p = &Page{Title: title}
+	}
+	t, _ := template.ParseFiles("edit.html")
+	t.Execute(w, p)
+}
+
+func main() {
+	// https://golang.org/doc/articles/wiki/#tmp_6
+	http.HandleFunc("/view/", viewHandler)
+	http.HandleFunc("/edit/", editHandler)
+	log.Fatal(http.ListenAndServe(":8088", nil))
 }
