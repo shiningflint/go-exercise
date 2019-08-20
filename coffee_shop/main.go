@@ -22,7 +22,7 @@ func main() {
 func generateCustomers(num int) []customer {
 	var sc []customer
 	for i := 0; i < num; i++ {
-		newc := customer{name: "Mister-" + strconv.Itoa(i)}
+		newc := customer{name: "Mister customer-" + strconv.Itoa(i)}
 		sc = append(sc, newc)
 	}
 	return sc
