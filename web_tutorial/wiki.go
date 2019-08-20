@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 )
 
+// Page , a web page has title and body
 type Page struct {
 	Title string
 	Body  []byte
@@ -24,11 +27,12 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
-func main() {
-	p1 := &Page{Title: "post_one", Body: []byte("This is the body of the first post here hahahahaha")}
-	fmt.Println(p1)
-	p1.save()
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	p, _ := loadPage("post_one")
+	fmt.Fprintf(w, "<p>%s</p><p>%s</p>", p.Title, p.Body)
+}
 
-	p2, _ := loadPage("post_one")
-	fmt.Println(string(p2.Body))
+func main() {
+	http.HandleFunc("/view/", viewHandler)
+	log.Fatal(http.ListenAndServe(":8088", nil))
 }
