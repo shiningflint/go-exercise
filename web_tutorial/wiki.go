@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+var templates = template.Must(template.ParseFiles("edit.html", "view.html", "save.html"))
+
 // Page , a web page has title and body
 type Page struct {
 	Title string
@@ -28,11 +30,7 @@ func loadPage(title string) (*Page, error) {
 }
 
 func renderTemplate(w http.ResponseWriter, p *Page, fn string) {
-	t, err := template.ParseFiles(fn)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	err = t.Execute(w, p)
+	err := templates.ExecuteTemplate(w, fn, p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
