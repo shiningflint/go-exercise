@@ -1,0 +1,9 @@
+.DS_Store
+
+web_tls/myCA.key
+web_tls/myCA.pem
+web_tls/myCA.srl
+web_tls/server.conf
+web_tls/server.crt
+web_tls/server.csr
+web_tls/server.key
